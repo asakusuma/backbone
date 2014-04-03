@@ -1327,9 +1327,9 @@
       }
       if (!callback) callback = this[name];
       var router = this;
-      Backbone.history.route(route, function(fragment, options) {
+      Backbone.history.route(route, function(fragment) {
         var args = router._extractParameters(route, fragment);
-        if (router.execute(callback, args, name, options) !== false) {
+        if (router.execute(callback, args, name) !== false) {
           router.trigger.apply(router, ['route:' + name].concat(args));
           router.trigger('route', name, args);
           Backbone.history.trigger('route', router, name, args);
@@ -1340,8 +1340,8 @@
 
     // Execute a route handler with the provided parameters.  This is an
     // excellent place to do pre-route setup or post-route cleanup.
-    execute: function(callback, args, name, options) {
-      if (callback) return callback.apply(this, args);
+    execute: function(callback, args, name) {
+      if (callback) callback.apply(this, args);
     },
 
     // Simple proxy to `Backbone.history` to save a fragment into the history.
@@ -1573,11 +1573,11 @@
     // Attempt to load the current URL fragment. If a route succeeds with a
     // match, returns `true`. If no defined routes matches the fragment,
     // returns `false`.
-    loadUrl: function(fragment, options) {
-      if(!options || !options.silent) fragment = this.fragment = this.getFragment(fragment);
+    loadUrl: function(fragment) {
+      fragment = this.fragment = this.getFragment(fragment);
       return _.any(this.handlers, function(handler) {
         if (handler.route.test(fragment)) {
-          handler.callback(fragment, options);
+          handler.callback(fragment);
           return true;
         }
       });
